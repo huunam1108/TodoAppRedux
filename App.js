@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { View } from 'react-native';
+import { connect } from 'react-redux'
 
 import { actionCreators } from './src/TodoListRedux'
 
@@ -7,37 +8,24 @@ import List from './src/List'
 import Title from './src/Title'
 import Input from './src/Input'
 
-export default class App extends Component {
+const mapStateToProps = (state) => ({
+  todos: state.todos
+})
 
-  state = {}
-
-  componentWillMount() {
-    const { store } = this.props
-    const { todos } = store.getState()
-    this.setState({ todos })
-
-    this.unsubscribe = store.subscribe(() => {
-      const { todos } = store.getState()
-      this.setState({ todos })
-    })
-  }
-
-  componentWillUnmount() {
-    this.unsubscribe()
-  }
+class App extends Component {
 
   onAddTodo = (text) => {
-    const { store } = this.props
-    store.dispatch(actionCreators.add(text))
+    const { dispatch } = this.props
+    dispatch(actionCreators.add(text))
   }
 
   onRemoveTodo = (index) => {
-    const { store } = this.props
-    store.dispatch(actionCreators.remove(index))
+    const { dispatch } = this.props
+    dispatch(actionCreators.remove(index))
   }
 
   render() {
-    const { todos } = this.state
+    const { todos } = this.props
     return (
       <View>
         <Title>To-do List</Title>
@@ -52,3 +40,5 @@ export default class App extends Component {
     );
   }
 }
+
+export default connect(mapStateToProps)(App)
